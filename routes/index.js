@@ -2,7 +2,8 @@ const express = require('express');
 
 const router = express.Router();
 const { check, validationResult } = require('express-validator');
-const signupController = require('../app/controllers/signup.controller');
+const signupController = require('../app/controllers/signup.controller').createUser;
+const loginController = require('../app/controllers/signin.controller');
 
 /* GET home page. */
 router.get('/', (req, res) => {
@@ -46,6 +47,40 @@ router.post(
     next();
   }],
   signupController,
+);
+
+/**
+ * @api {post} /login/ Grant User Access
+ * @apiName  User Sign in
+ * @apiGroup User
+ *
+ * @apiParam {String} email User's email
+ * @apiParam {String} password User's password
+ *
+ * @apiSuccess {Object} {
+ *      firstname: '',
+ *      lastname: '',
+ *      .........: '',
+ *      token: ''
+ * }
+ * @apiError {Array} Errors .
+ */
+
+router.post(
+  '/signin',
+  [[
+    check('email').exists(),
+    check('password').exists(),
+  ], (req, res, next) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
+
+    next();
+  }],
+  loginController,
 );
 
 module.exports = router;

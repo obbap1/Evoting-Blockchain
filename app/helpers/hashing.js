@@ -1,24 +1,26 @@
 const crypto = require('crypto');
 
+// Hash password
 const hashPassword = async (password) => {
-  console.log('here');
   try {
-    const key = await crypto.scryptSync(password, 'salt', 24);
-    console.log({ key });
-    const iv = Buffer.alloc(16, 0);
-    console.log({ iv });
-    const cipher = await crypto.createCipheriv(process.env.ALGORITHM, key, iv);
-    console.log({ cipher });
-    let encrypted = await cipher.update(process.env.APP_KEY, 'utf8', 'hex');
-    console.log({ encrypted });
-    encrypted += cipher.final('hex');
-    console.log({ encrypted });
+    console.log(password);
+    const encrypted = crypto.createHmac('sha256', password)
+      .update(process.env.APP_KEY)
+      .digest('hex');
     return encrypted;
   } catch (e) {
     console.log(`Error at hashing password: ${e}`);
   }
 };
 
+// Ensure the password isnt sent back to the frontend
+const transformUser = (user) => {
+  // eslint-disable-next-line no-param-reassign
+  delete user.password;
+  return user;
+};
+
 module.exports = {
   hashPassword,
+  transformUser,
 };
