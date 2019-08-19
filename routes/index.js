@@ -1,86 +1,9 @@
 const express = require('express');
 
 const router = express.Router();
-const { check, validationResult } = require('express-validator');
-const signupController = require('../app/controllers/signup.controller').createUser;
-const loginController = require('../app/controllers/signin.controller');
 
-/* GET home page. */
-router.get('/', (req, res) => {
-  res.render('index', { title: 'Express' });
-});
+const VersionOneRouter = require('./api/v1');
 
-/**
- * @api {post} /signup/ Request User information
- * @apiName Register User
- * @apiGroup User
- *
- * @apiParam {String} firstname User's first name
- * @apiParam {String} lastname User's last name
- * @apiParam {String} email User's email
- * @apiParam {String} type User's type (voter or candidate). Default: voter
- * @apiParam {String} password User's password
- * @apiParam {String} passport User's passport
- *
- * @apiSuccess {String} You have registered successfully.
- * @apiError {Array} Errors .
- */
-
-router.post(
-  '/signup',
-  [[
-    check('firstname').exists(),
-    check('lastname').exists(),
-    check('password')
-      .exists()
-      .isLength({ min: 6 }),
-    check('email').isEmail(),
-    check('passport').exists(),
-    check('type').exists(),
-  ], (req, res, next) => {
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-      return res.status(422).json({ errors: errors.array() });
-    }
-
-    next();
-  }],
-  signupController,
-);
-
-/**
- * @api {post} /login/ Grant User Access
- * @apiName  User Sign in
- * @apiGroup User
- *
- * @apiParam {String} email User's email
- * @apiParam {String} password User's password
- *
- * @apiSuccess {Object} {
- *      firstname: '',
- *      lastname: '',
- *      .........: '',
- *      token: ''
- * }
- * @apiError {Array} Errors .
- */
-
-router.post(
-  '/signin',
-  [[
-    check('email').exists(),
-    check('password').exists(),
-  ], (req, res, next) => {
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-      return res.status(422).json({ errors: errors.array() });
-    }
-
-    next();
-  }],
-  loginController,
-);
+router.use('/api/v1', VersionOneRouter);
 
 module.exports = router;

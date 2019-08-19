@@ -3,27 +3,14 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const userSchema = new Schema({
-  email: {
+  name: {
     type: String,
     required: true,
     unique: true,
   },
-  password: {
-    type: String,
-    required: true,
-  },
-  firstname: {
-    type: String,
-    required: true,
-  },
-  lastname: {
-    type: String,
-    required: true,
-  },
-  type: {
-    type: String,
-    default: 'voter',
-    required: true,
+  status: {
+    type: Boolean,
+    default: false,
   },
   createdAt: {
     type: Date,

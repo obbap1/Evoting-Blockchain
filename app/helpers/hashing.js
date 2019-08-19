@@ -3,7 +3,6 @@ const crypto = require('crypto');
 // Hash password
 const hashPassword = async (password) => {
   try {
-    console.log(password);
     const encrypted = crypto.createHmac('sha256', password)
       .update(process.env.APP_KEY)
       .digest('hex');

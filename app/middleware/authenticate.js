@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 const jwt = require('jsonwebtoken');
 const path = require('path');
 const fs = require('fs');
@@ -13,7 +14,10 @@ const options = {
 };
 
 // Read public key
-const publicKey = fs.readFileSync(path.join(path.normalize(`${__dirname}/..`), 'helpers/publicKey.pem'), 'utf8');
+const publicKey = fs.readFileSync(
+  path.join(path.normalize(`${__dirname}/..`), 'helpers/publicKey.pem'),
+  'utf8',
+);
 
 // Cache user
 const cacheUser = user => redis.set(`user::profile::${user.id}`, JSON.stringify(user), 'EX', tokenExpiration);
@@ -62,7 +66,7 @@ const authorize = () => (req, res, next) => {
         algorithm: 'RS256',
         expiresIn: tokenExpiration,
       });
-      getCachedUser(decoded.id).then((user) => {
+      return getCachedUser(decoded.id).then((user) => {
         if (!user) return res.status(401).send('invalid user');
         user = Object.assign({}, user, decoded);
         req.authenticatedUser = user;
@@ -72,29 +76,17 @@ const authorize = () => (req, res, next) => {
   );
 };
 
-// Confirm user is a voter
-const isVoter = () => (req, res, next) => {
-  if (req.authenticatedUser.type !== 'voter') return res.status(401).send('Invalid User');
-  next();
-};
-
-// Confirm user is a candidate
-const isCandidate = () => (req, res, next) => {
-  if (req.authenticatedUser.type !== 'candidate') return res.status(401).send('Invalid User');
-  next();
-};
-
-// Confirm user is an admin
-const isAdmin = () => (req, res, next) => {
-  if (req.authenticatedUser.type !== 'admin') return res.status(401).send('Invalid User');
-  next();
+// Confirm user is authenticated, or belongs to a particular type
+const isAuthenticated = (type = '') => (req, res, next) => {
+  if (!req.authenticatedUser || (type && req.authenticatedUser.type !== type)) {
+    return res.status(401).send('Invalid User');
+  }
+  return next();
 };
 
 module.exports = {
   authorize,
-  isVoter,
-  isAdmin,
-  isCandidate,
   generateUserToken,
   cacheUser,
+  isAuthenticated,
 };

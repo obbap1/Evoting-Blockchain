@@ -8,7 +8,7 @@ function createUserFactory(UserModel, hashPasswordFunction) {
    *@params {req,res}
    *@returns {res}
    */
-    console.log(typeof hashPasswordFunction);
+
     const password = await hashPasswordFunction(req.body.password.toLowerCase().trim());
 
     const user = new UserModel({
@@ -29,7 +29,6 @@ function createUserFactory(UserModel, hashPasswordFunction) {
 
 const createUser = async (req, res) => {
   const createNewUser = createUserFactory(User, hashPassword);
-  console.log('createnewuser', createNewUser);
   try {
     await createNewUser(req, res);
   } catch (e) {
