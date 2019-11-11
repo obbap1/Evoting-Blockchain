@@ -3,10 +3,10 @@ const express = require("express");
 const router = express.Router();
 
 const AuthRouter = require("./auth");
-// const ProductRouter = require("./product");
+const ProfileRouter = require("./profile");
 
 router.use("/auth", AuthRouter);
-// router.use("/product", usersRouter);
+router.use("/profile", ProfileRouter);
 
 router.get("/", (req, res) => res.send({ message: "Block chain" }));
 

@@ -19,7 +19,6 @@ const transformUser = user => {
   delete user.password;
   return user;
 };
-
 const returnLowerCase = x => x.toLowerCase();
 const trim = x => x.trim();
 
