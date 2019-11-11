@@ -12,7 +12,7 @@ router.get("/", (req, res) => {
 });
 
 /**
- * @api {post} /api/v1/auth/signup/ Register User
+ * @api {post} /auth/signup/ Register User
  * @apiName Register User
  * @apiGroup User
  *
@@ -51,7 +51,7 @@ router.post(
 );
 
 /**
- * @api {post} /api/v1/auth/signin/ Grant User Access
+ * @api {post} /auth/signin/ Grant User Access
  * @apiName  User Sign in
  * @apiGroup User
  *
