@@ -8,6 +8,7 @@
     "documentation": "apidoc -i ./routes/ -o doc/"
   },
   "dependencies": {
+    "apidoc": "^0.17.7",
     "bcrypt": "^3.0.6",
     "body-parser": "~1.0.0",
     "cookie-parser": "~1.0.1",

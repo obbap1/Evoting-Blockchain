@@ -1,17 +1,19 @@
-const express = require('express');
+const express = require("express");
 
 const router = express.Router();
-const { check, validationResult } = require('express-validator');
-const signupController = require('../app/controllers/signup.controller').createUser;
-const loginController = require('../app/controllers/signin.controller');
-const profileController = require('../app/controllers/profile.controller');
+const { check, validationResult } = require("express-validator");
+const signupController = require("../app/controllers/signup.controller")
+  .createUser;
+const loginController = require("../app/controllers/signin.controller");
+const profileController = require("../app/controllers/profile.controller");
 const {
-  authorize, isAuthenticated,
-} = require('../app/middleware/authenticate');
+  authorize,
+  isAuthenticated
+} = require("../app/middleware/authenticate");
 
 /* GET home page. */
-router.get('/', (req, res) => {
-  res.render('index', { title: 'Express' });
+router.get("/", (req, res) => {
+  res.render("index", { title: "Express" });
 });
 
 /**
@@ -26,30 +28,33 @@ router.get('/', (req, res) => {
  * @apiParam {String} password User's password
  * @apiParam {String} passport User's passport
  *
- * @apiSuccess {String} You have registered successfully.
- * @apiError {Array} Errors .
+ * @apiSuccess {String} message You have registered successfully.
+ * @apiError {Array} errors Errors
  */
 
 router.post(
-  '/signup',
-  [[
-    check('firstname').exists(),
-    check('lastname').exists(),
-    check('password')
-      .exists()
-      .isLength({ min: 6 }),
-    check('email').isEmail(),
-    check('type').exists(),
-  ], (req, res, next) => {
-    const errors = validationResult(req);
+  "/signup",
+  [
+    [
+      check("firstname").exists(),
+      check("lastname").exists(),
+      check("password")
+        .exists()
+        .isLength({ min: 6 }),
+      check("email").isEmail(),
+      check("type").exists()
+    ],
+    (req, res, next) => {
+      const errors = validationResult(req);
 
-    if (!errors.isEmpty()) {
-      return res.status(422).json({ errors: errors.array() });
+      if (!errors.isEmpty()) {
+        return res.status(422).json({ errors: errors.array() });
+      }
+
+      return next();
     }
-
-    return next();
-  }],
-  signupController,
+  ],
+  signupController
 );
 
 /**
@@ -60,30 +65,29 @@ router.post(
  * @apiParam {String} email User's email
  * @apiParam {String} password User's password
  *
- * @apiSuccess {Object} {
+ * @apiSuccess {Object} data {
  *      firstname: '',
  *      lastname: '',
- *      .........: '',
  *      token: ''
  * }
- * @apiError {Array} Errors .
+ * @apiError {Array} errors Errors
  */
 
 router.post(
-  '/signin',
-  [[
-    check('email').exists(),
-    check('password').exists(),
-  ], (req, res, next) => {
-    const errors = validationResult(req);
+  "/signin",
+  [
+    [check("email").exists(), check("password").exists()],
+    (req, res, next) => {
+      const errors = validationResult(req);
 
-    if (!errors.isEmpty()) {
-      return res.status(422).json({ errors: errors.array() });
+      if (!errors.isEmpty()) {
+        return res.status(422).json({ errors: errors.array() });
+      }
+
+      return next();
     }
-
-    return next();
-  }],
-  loginController,
+  ],
+  loginController
 );
 
 /**
@@ -92,20 +96,16 @@ router.post(
  * @apiGroup User
  *
  *
- * @apiSuccess {Object} {
+ * @apiSuccess {Object} data {
  *      firstname: '',
  *      lastname: '',
  *      email: '',
  *      type: ''
  * }
- * @apiError {Array} Errors .
+ * @apiError {Array} errors Errors
  */
 
-router.get(
-  '/get-profile',
-  [authorize(), isAuthenticated()],
-  profileController,
-);
+router.get("/get-profile", [authorize(), isAuthenticated()], profileController);
 
 /**
  * @api {post} /vote/ Vote for a candidate
@@ -115,43 +115,24 @@ router.get(
  * @apiParam {String} candidateId ID of the candidate
  * @apiParam {String} password User's password
  *
- * @apiSuccess {Object} {
+ * @apiSuccess {Object} data {
  *      firstname: '',
  *      lastname: '',
- *      .........: '',
  *      token: ''
  * }
- * @apiError {Array} Errors .
+ * @apiError {Array} errors Errors
  */
 
-router.post(
-  '/vote',
-  [isAuthenticated('voter')],
-);
+router.post("/vote", [isAuthenticated("voter")]);
 
-router.post(
-  '/create-election',
-  [isAuthenticated('admin')],
-);
+router.post("/create-election", [isAuthenticated("admin")]);
 
-router.get(
-  '/get-votes',
-  [isAuthenticated('candidate')],
-);
+router.get("/get-votes", [isAuthenticated("candidate")]);
 
-router.get(
-  '/blockchain',
-  [isAuthenticated()],
-);
+router.get("/blockchain", [isAuthenticated()]);
 
-router.get(
-  '/get-all-candidates',
-  [isAuthenticated('voter')],
-);
+router.get("/get-all-candidates", [isAuthenticated("voter")]);
 
-router.get(
-  '/get-all-votes',
-  [isAuthenticated()],
-);
+router.get("/get-all-votes", [isAuthenticated()]);
 
 module.exports = router;
