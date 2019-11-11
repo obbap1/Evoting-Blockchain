@@ -1,28 +1,30 @@
-const User = require('../models/user');
-const { hashPassword } = require('../helpers/hashing');
+const User = require("../../models/user");
+const { hashPassword, returnLowerCase, trim } = require("../../helpers/utils");
 
 function createUserFactory(UserModel, hashPasswordFunction) {
   return async function createUser(req, res) {
-  /**
-   *method to add a new user to the database
-   *@params {req,res}
-   *@returns {res}
-   */
+    /**
+     *method to add a new user to the database
+     *@params {req,res}
+     *@returns {res}
+     */
 
-    const password = await hashPasswordFunction(req.body.password.toLowerCase().trim());
+    let { firstname, lastname, email, passport, type, password } = req.body;
+
+    password = await hashPasswordFunction(returnLowerCase(trim(password)));
 
     const user = new UserModel({
-      firstname: req.body.firstname.toLowerCase().trim(),
-      lastname: req.body.lastname.toLowerCase().trim(),
-      email: req.body.email.toLowerCase().trim(),
-      passport: req.body.passport.toLowerCase().trim(),
-      type: req.body.type.toLowerCase().trim(),
-      password,
+      firstname: returnLowerCase(trim(firstname)),
+      lastname: returnLowerCase(trim(lastname)),
+      email: returnLowerCase(trim(email)),
+      passport: passport ? returnLowerCase(trim(passport)) : "",
+      type: returnLowerCase(trim(type)),
+      password
     });
 
-    await user.save((err) => {
+    await user.save(err => {
       if (err) return res.status(500).send(err);
-      return res.status(200).send('You have registered successfully');
+      return res.status(200).send("You have registered successfully");
     });
   };
 }
@@ -36,8 +38,7 @@ const createUser = async (req, res) => {
   }
 };
 
-
 module.exports = {
   createUserFactory,
-  createUser,
+  createUser
 };

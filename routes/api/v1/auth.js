@@ -2,14 +2,14 @@ const express = require("express");
 
 const router = express.Router();
 const { check, validationResult } = require("express-validator");
-const signupController = require("../app/controllers/signup.controller")
+const signupController = require("../../../app/controllers/auth/signup.controller")
   .createUser;
-const loginController = require("../app/controllers/signin.controller");
-const profileController = require("../app/controllers/profile.controller");
+const loginController = require("../../../app/controllers/auth/signin.controller");
+const profileController = require("../../../app/controllers/profile.controller");
 const {
   authorize,
   isAuthenticated
-} = require("../app/middleware/authenticate");
+} = require("../../../app/middleware/authenticate");
 
 /* GET home page. */
 router.get("/", (req, res) => {
@@ -17,7 +17,7 @@ router.get("/", (req, res) => {
 });
 
 /**
- * @api {post} /signup/ Request User information
+ * @api {post} /api/v1/auth/signup/ Request User information
  * @apiName Register User
  * @apiGroup User
  *
@@ -31,7 +31,6 @@ router.get("/", (req, res) => {
  * @apiSuccess {String} message You have registered successfully.
  * @apiError {Array} errors Errors
  */
-
 router.post(
   "/signup",
   [
@@ -41,8 +40,7 @@ router.post(
       check("password")
         .exists()
         .isLength({ min: 6 }),
-      check("email").isEmail(),
-      check("type").exists()
+      check("email").isEmail()
     ],
     (req, res, next) => {
       const errors = validationResult(req);
@@ -58,7 +56,7 @@ router.post(
 );
 
 /**
- * @api {post} /login/ Grant User Access
+ * @api {post} /api/v1/auth/login/ Grant User Access
  * @apiName  User Sign in
  * @apiGroup User
  *
