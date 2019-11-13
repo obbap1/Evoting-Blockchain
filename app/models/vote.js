@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const { Schema } = mongoose;
 
@@ -6,28 +6,16 @@ const voteSchema = new Schema({
   voter: {
     type: Schema.Types.ObjectId,
     required: true,
-    ref: 'User',
+    ref: "User"
   },
   candidate: {
     type: Schema.Types.ObjectId,
     required: true,
-    ref: 'User',
+    ref: "Candidate"
   },
-  firstname: {
-    type: String,
-  },
-  lastname: {
-    type: String,
-  },
-  passport: {
-    type: String,
-  },
-  type: {
-    type: String,
-    default: 'voter',
-  },
+  blockChain: {
+    type: String
+  }
 });
 
-const Vote = mongoose.model('Vote', voteSchema);
-
-module.exports = Vote;
+module.exports = mongoose.model("Vote", voteSchema);

@@ -1,27 +1,26 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const { Schema } = mongoose;
 
-const userSchema = new Schema({
+const electionSchema = new Schema({
   name: {
     type: String,
     required: true,
-    unique: true,
+    unique: true
   },
   status: {
-    type: Boolean,
-    default: false,
+    type: String,
+    enum: ["completed", "in-progress", "waiting"],
+    default: "waiting"
   },
   createdAt: {
     type: Date,
-    default: Date.now,
+    default: Date.now
   },
   updatedAt: {
     type: Date,
-    default: Date.now,
-  },
+    default: Date.now
+  }
 });
 
-const User = mongoose.model('User', userSchema);
-
-module.exports = User;
+module.exports = mongoose.model("Election", electionSchema);

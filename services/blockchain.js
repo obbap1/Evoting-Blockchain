@@ -1,9 +1,13 @@
 /* eslint-disable class-methods-use-this */
-const crypto = require('crypto');
-
+const crypto = require("crypto");
 
 class Block {
-  constructor(index, timestamp, data = { voterId: '', candidateId: '' }, previousHash = '') {
+  constructor(
+    index,
+    timestamp,
+    data = { voterId: "", candidateId: "" },
+    previousHash = ""
+  ) {
     this.index = index;
     this.timestamp = timestamp;
     this.data = data;
@@ -13,16 +17,20 @@ class Block {
   }
 
   calculateHash() {
-    const hash = crypto.createHash('sha256');
+    const hash = crypto.createHash("sha256");
     hash.update(
-      `${this.index} ${this.previousHash} ${this.timestamp} ${JSON.stringify(this.data)} ${this.nonce}`,
+      `${this.index} ${this.previousHash} ${this.timestamp} ${JSON.stringify(
+        this.data
+      )} ${this.nonce}`
     );
-    const finalHash = hash.digest('hex');
+    const finalHash = hash.digest("hex");
     return finalHash;
   }
 
   mineBlock(difficulty) {
-    while (this.hash.substring(0, difficulty) !== Array(difficulty + 1).join('0')) {
+    while (
+      this.hash.substring(0, difficulty) !== Array(difficulty + 1).join("0")
+    ) {
       this.nonce += 1;
       this.hash = this.calculateHash();
     }
@@ -36,7 +44,7 @@ class BlockChain {
   }
 
   createGenesisBlock() {
-    return new Block(0, '01/01/2019', 'Genesis block', '0');
+    return new Block(0, "01/01/2019", "Genesis block", "0");
   }
 
   getLatestBlock() {

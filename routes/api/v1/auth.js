@@ -1,14 +1,16 @@
-const express = require("express");
+const express = require('express');
 
 const router = express.Router();
-const { check, validationResult } = require("express-validator");
-const signupController = require("../../../app/controllers/auth/signup.controller")
-  .createUser;
-const loginController = require("../../../app/controllers/auth/signin.controller");
+const { check, validationResult } = require('express-validator');
+const AuthController = require('../../../app/controllers/auth.controller');
+const {
+  authorize,
+  isAuthenticated
+} = require('../../../app/middleware/authenticate');
 
 /* GET home page. */
-router.get("/", (req, res) => {
-  res.render("index", { title: "Express" });
+router.get('/', (req, res) => {
+  res.render('index', { title: 'Express' });
 });
 
 /**
@@ -27,15 +29,15 @@ router.get("/", (req, res) => {
  * @apiError {Array} errors Errors
  */
 router.post(
-  "/signup",
+  '/signup',
   [
     [
-      check("firstname").exists(),
-      check("lastname").exists(),
-      check("password")
+      check('firstname').exists(),
+      check('lastname').exists(),
+      check('password')
         .exists()
         .isLength({ min: 6 }),
-      check("email").isEmail()
+      check('email').isEmail()
     ],
     (req, res, next) => {
       const errors = validationResult(req);
@@ -47,7 +49,7 @@ router.post(
       return next();
     }
   ],
-  signupController
+  AuthController.createUser
 );
 
 /**
@@ -68,9 +70,9 @@ router.post(
  */
 
 router.post(
-  "/signin",
+  '/signin',
   [
-    [check("email").exists(), check("password").exists()],
+    [check('email').exists(), check('password').exists()],
     (req, res, next) => {
       const errors = validationResult(req);
 
@@ -81,7 +83,28 @@ router.post(
       return next();
     }
   ],
-  loginController
+  AuthController.login
+);
+
+/**
+ * @api {get} /auth/get-profile/ Get User Profile
+ * @apiName  User Profile
+ * @apiGroup User
+ *
+ *
+ * @apiSuccess {Object} data {
+ *      firstname: '',
+ *      lastname: '',
+ *      email: '',
+ *      type: ''
+ * }
+ * @apiError {Array} errors Errors
+ */
+
+router.get(
+  '/get-profile',
+  [authorize(), isAuthenticated()],
+  AuthController.getUserProfile
 );
 
 module.exports = router;
