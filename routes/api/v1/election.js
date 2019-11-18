@@ -3,7 +3,10 @@ const express = require('express');
 const router = express.Router();
 
 const ElectionController = require('../../../app/controllers/election.controller');
-const { isAuthenticated } = require('../../../app/middleware/authenticate');
+const {
+  isAuthenticated,
+  authorize
+} = require('../../../app/middleware/authenticate');
 
 /**
  * @api {get} /election/history/ See Previous and Current elections and results
@@ -15,6 +18,10 @@ const { isAuthenticated } = require('../../../app/middleware/authenticate');
  * @apiError {Array} errors Errors
  */
 
-router.post('/history', [isAuthenticated()], ElectionController.getHistory);
+router.get(
+  '/history',
+  [authorize(), isAuthenticated()],
+  ElectionController.getHistory
+);
 
 module.exports = router;

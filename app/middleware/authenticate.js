@@ -9,46 +9,61 @@ const tokenExpiration = 24 * 60 * 60;
 
 // Read from private key
 const options = {
-  key: fs.readFileSync(path.join(__dirname, '../helpers/privateKey.pem'), 'utf8'),
-  passphrase: process.env.PASS_PHRASE,
+  key: fs.readFileSync(
+    path.join(__dirname, '../helpers/privateKey.pem'),
+    'utf8'
+  ),
+  passphrase: process.env.PASS_PHRASE
 };
 
 // Read public key
 const publicKey = fs.readFileSync(
   path.join(path.normalize(`${__dirname}/..`), 'helpers/publicKey.pem'),
-  'utf8',
+  'utf8'
 );
 
 // Cache user
-const cacheUser = user => redis.set(`user::profile::${user.id}`, JSON.stringify(user), 'EX', tokenExpiration);
+const cacheUser = user =>
+  redis.set(
+    `user::profile::${user.id}`,
+    JSON.stringify(user),
+    'EX',
+    tokenExpiration
+  );
 
 // Generate Token for user
-const generateUserToken = user => new Promise((resolve) => {
-  user = JSON.parse(JSON.stringify(user));
-  cacheUser(user);
-  user.token = jwt.sign({ type: user.type, email: user.email, id: user.id }, options, {
-    algorithm: 'RS256',
-    expiresIn: tokenExpiration,
+const generateUserToken = user =>
+  new Promise(resolve => {
+    user = JSON.parse(JSON.stringify(user));
+    cacheUser(user);
+    user.token = jwt.sign(
+      { type: user.type, email: user.email, id: user.id },
+      options,
+      {
+        algorithm: 'RS256',
+        expiresIn: tokenExpiration
+      }
+    );
+    resolve(user);
   });
-  resolve(user);
-});
 
 // find cached User
-const getCachedUser = id => new Promise((resolve) => {
-  redis.get(`user::profile::${id}`, (err, user) => {
-    if (err) throw err;
-    if (!user) {
-      User.findOne(id).then((response) => {
-        if (!response) return resolve(null);
-        response = JSON.parse(JSON.stringify(response));
-        cacheUser(response);
-        return resolve(response);
-      });
-    }
-    user = JSON.parse(user);
-    return resolve(user);
+const getCachedUser = id =>
+  new Promise(resolve => {
+    redis.get(`user::profile::${id}`, (err, user) => {
+      if (err) throw err;
+      if (!user) {
+        User.findOne(id).then(response => {
+          if (!response) return resolve(null);
+          response = JSON.parse(JSON.stringify(response));
+          cacheUser(response);
+          return resolve(response);
+        });
+      }
+      user = JSON.parse(user);
+      return resolve(user);
+    });
   });
-});
 
 // Add token to response
 const authorize = () => (req, res, next) => {
@@ -62,17 +77,21 @@ const authorize = () => (req, res, next) => {
     { algorithms: ['RS256'] },
     (err, decoded) => {
       if (err) return res.status(401).send(err);
-      res.token = jwt.sign({ type: decoded.type, email: decoded.email, id: decoded.id }, options, {
-        algorithm: 'RS256',
-        expiresIn: tokenExpiration,
-      });
-      return getCachedUser(decoded.id).then((user) => {
+      res.token = jwt.sign(
+        { type: decoded.type, email: decoded.email, id: decoded.id },
+        options,
+        {
+          algorithm: 'RS256',
+          expiresIn: tokenExpiration
+        }
+      );
+      return getCachedUser(decoded.id).then(user => {
         if (!user) return res.status(401).send('invalid user');
         user = Object.assign({}, user, decoded);
         req.authenticatedUser = user;
         next();
       });
-    },
+    }
   );
 };
 
@@ -88,5 +107,5 @@ module.exports = {
   authorize,
   generateUserToken,
   cacheUser,
-  isAuthenticated,
+  isAuthenticated
 };

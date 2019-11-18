@@ -1,11 +1,11 @@
-const User = require("../models/user");
+const User = require('../models/user');
 const {
   hashPassword,
   transformUser,
   returnLowerCase,
   trim
-} = require("../helpers/utils");
-const { generateUserToken } = require("../middleware/authenticate");
+} = require('../helpers/utils');
+const { generateUserToken } = require('../middleware/authenticate');
 
 //Factory function
 function createUserFactory(UserModel, hashPasswordFunction) {
@@ -24,7 +24,7 @@ function createUserFactory(UserModel, hashPasswordFunction) {
       firstname: returnLowerCase(trim(firstname)),
       lastname: returnLowerCase(trim(lastname)),
       email: returnLowerCase(trim(email)),
-      passport: passport ? returnLowerCase(trim(passport)) : "",
+      passport: passport ? returnLowerCase(trim(passport)) : '',
       type: returnLowerCase(trim(type)),
       password
     });
@@ -34,9 +34,9 @@ function createUserFactory(UserModel, hashPasswordFunction) {
       .then(() =>
         res
           .status(200)
-          .send({ msg: "You have registered successfully", data: null })
+          .send({ msg: 'You have registered successfully', data: null })
       )
-      .catch(err => res.status(500).send({ msg: "An Error occured", err }));
+      .catch(err => res.status(500).send({ msg: 'An Error occured', err }));
   };
 }
 
@@ -52,12 +52,11 @@ const login = async (req, res) => {
   password = await hashPassword(returnLowerCase(trim(password)));
 
   User.findOne({ email }).then(user => {
-    if (!user)
-      return res.statusCode(404).send({ msg: "Invalid User", data: null });
+    if (!user) return res.status(404).send({ msg: 'Invalid User', data: null });
     if (user.password === password) {
       return generateUserToken(user).then(u =>
         res.status(200).json({
-          msg: "User Authentication Successful",
+          msg: 'User Authentication Successful',
           data: transformUser(u)
         })
       );
@@ -87,7 +86,7 @@ const getUserProfile = async (req, res) => {
       return res.status(500).send({ msg: "User can't be found", err: null });
     return res
       .status(200)
-      .json({ msg: "User profile found!", data: transformUser(user) });
+      .json({ msg: 'User profile found!', data: transformUser(user) });
   } catch (e) {
     console.log(e);
     throw e;

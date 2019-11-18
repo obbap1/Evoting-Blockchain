@@ -87,7 +87,7 @@ router.post(
 );
 
 /**
- * @api {get} /auth/get-profile/ Get User Profile
+ * @api {get} /auth/profile/ Get User Profile
  * @apiName  User Profile
  * @apiGroup User
  *
@@ -102,7 +102,7 @@ router.post(
  */
 
 router.get(
-  '/get-profile',
+  '/profile',
   [authorize(), isAuthenticated()],
   AuthController.getUserProfile
 );

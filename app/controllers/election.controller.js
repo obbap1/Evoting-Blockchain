@@ -1,10 +1,11 @@
-const Candidate = require('../models/candidate');
+const Election = require('../models/election');
 const User = require('../models/user');
 
 const getHistory = async (req, res) => {
   try {
-    const { election } = await User.findById(req.authenticatedUser._id);
-    let names = election.map(x => Election.findById(x));
+    const { elections } = await User.findById(req.authenticatedUser._id);
+    console.log({ elections });
+    let names = elections.map(x => Election.findById(x));
     names = await Promise.all(names);
     console.log({ names });
     return res

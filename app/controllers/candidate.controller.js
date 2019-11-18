@@ -22,6 +22,13 @@ const registerForElection = (req, res) => {
             }
           }
         );
+
+        return res
+          .status(200)
+          .send({
+            msg: 'You have registered for the election successfully',
+            data: null
+          });
       } catch (err) {
         return res.status(500).send({ msg: 'An Error occured', err });
       }
