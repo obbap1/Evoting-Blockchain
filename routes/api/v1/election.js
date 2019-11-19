@@ -11,7 +11,7 @@ const {
 /**
  * @api {get} /election/history/ See Previous and Current elections and results
  * @apiName  History
- * @apiGroup
+ * @apiGroup  Election
  *
  *
  * @apiSuccess {Object} message success message

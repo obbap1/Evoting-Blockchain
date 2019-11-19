@@ -71,12 +71,16 @@ class BlockChain {
     }
     return true;
   }
+
+  getChain() {
+    return this.chain;
+  }
 }
 
-const AllChains = {};
+const votingChain = new BlockChain();
 
 module.exports = {
-  BlockChain,
+  votingChain,
   Block,
   AllChains
 };
