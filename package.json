@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "apidoc": "^0.17.7",
-    "bcrypt": "^3.0.6",
+    "bcrypt": "^5.0.0",
     "body-parser": "~1.0.0",
     "cookie-parser": "~1.0.1",
     "debug": "~0.7.4",
